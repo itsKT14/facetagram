@@ -1,0 +1,44 @@
+.homeBanner{
+    min-height: 300px;
+}
+
+.homeHeader{
+    font-family: Papyrus;
+    font-size: 100px;
+}
+
+.homeDetail{
+    font-family: Papyrus;
+    font-size: 50px;
+}
+
+.cardsize{
+    width: 15rem;
+}
+
+.has-search .form-control {
+    padding-left: 2.8rem;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 20px;
+    height: 20px;
+    padding-left: 16px;
+    padding-top: 9px;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+
+.nav-menu {
+    color: black;
+}
+
+.nav-menu:hover {
+    color: white;
+    /* background: radial-gradient(circle at 24.1% 68.8%, rgb(50, 50, 50) 0%, rgb(0, 0, 0) 99.4%); */
+    background: linear-gradient(to top, rgb(9, 32, 63) 0%, rgb(83, 120, 149) 100%);
+}
