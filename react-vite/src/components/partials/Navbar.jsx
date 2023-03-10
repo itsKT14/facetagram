@@ -23,8 +23,18 @@ const Navbar = (props) => {
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link to={"/test"} className="nav-link nav-menu">
-                            Test  
+                            <Link to={"/test1"} className="nav-link nav-menu">
+                            SideNav  
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link to={"/test2"} className="nav-link nav-menu">
+                            Sir divino  
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link to={"/test3"} className="nav-link nav-menu">
+                            Sir JPL  
                             </Link>
                         </li>
                     </ul>
