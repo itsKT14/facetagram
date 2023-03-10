@@ -1,0 +1,99 @@
+.sidenav {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  background-color: #fff;
+  overflow-y: auto;
+  transition: all 0.3s ease-in-out;
+
+  &.dark {
+    background-color: #292b2f;
+    color: #fff;
+  }
+
+  .sidenav-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+
+    .logo {
+      height: 30px;
+    }
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+
+    &:hover {
+      background-color: #fafafa;
+    }
+
+    a {
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 8px 16px;
+
+      &.light {
+        color: #262626;
+      }
+
+      &.dark {
+        color: #fff;
+      }
+
+      &:hover {
+        color: #3897f0;
+      }
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      margin-right: 10px;
+    }
+
+    .nav-label {
+      font-size: 14px;
+    }
+  }
+
+  .sidenav-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+  }
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #8e8e8e;
+  font-size: 14px;
+  text-decoration: underline;
+
+  &:hover {
+    color: #262626;
+  }
+
+  .theme-icon {
+    font-size: 16px;
+    margin-right: 8px;
+  }
+
+  .theme-label {
+    font-weight: 600;
+  }
+}

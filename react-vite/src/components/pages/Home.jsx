@@ -4,6 +4,7 @@ import Navbar from '../partials/Navbar';
 import { useNavigate } from "react-router-dom";
 import { getUserFromToken } from '../../service/api';
 import Cookies from 'universal-cookie';
+import SideNav from '../partials/SideNav/SideNav';
 
 export default function Home() {
     TabTitle('Home');
@@ -34,7 +35,8 @@ export default function Home() {
 
     return (
         <div>
-            <Navbar name={name} pic={pic} ></Navbar>
+            <SideNav></SideNav>
+            {/* <Navbar name={name} pic={pic} ></Navbar> */}
             <div className="d-flex align-items-center justify-content-center" style={{height: "92vh"}}>
                 <div className="container-fluid bg-dark flex-column d-flex align-items-center justify-content-center homeBanner">
                     <p className="text-white homeHeader">Welcome WD37</p>
