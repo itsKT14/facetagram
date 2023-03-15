@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from "react-router-dom";
+// import { ModalLogout } from './ModalLogout';
 const Navbar = (props) => {
     return (
         <nav className="navbar navbar-expand-lg bg-white sticky-top border-bottom shadow-sm" data-bs-theme="white">
@@ -42,7 +43,7 @@ const Navbar = (props) => {
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle nav-menu" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <img className="rounded-circle border border-dark mx-1" src={props.pic} alt="" style={{width: 25, height: 25}}/>
-                                Hello, {props.name}
+                                &nbsp;Hello, {props.username}&nbsp;
                             </a>
                             <ul className="dropdown-menu">
                                 <li>
@@ -60,6 +61,7 @@ const Navbar = (props) => {
                     </div>
                 </div>
             </div>
+            {/* <ModalLogout></ModalLogout> */}
         </nav>
     )
 }

@@ -55,7 +55,7 @@ export default function Home() {
                     <div className='d-flex flex-wrap ps-3 gap-3'>
                         {
                         filterNameUser.map((data)=>(
-                            <div key={data.user_id}>
+                            <div key={data._id}>
                                 <Card userId={data.user_id} pic={data.pic} fname={data.fname} lname={data.lname} email={data.email}/>
                             </div>
                         ))

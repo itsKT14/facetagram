@@ -2,14 +2,12 @@ import React, { useState, useEffect} from 'react'
 import Navbar from '../partials/Navbar';
 import Cookies from 'universal-cookie';
 import { TabTitle } from '../../utilities/title';
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { getUserFromToken, getHomePostsFromToken } from '../../service/api';
+import { getUserFromToken, getUserProfile } from '../../service/api';
 import { ModalLogout } from '../partials/ModalLogout';
-import { Post } from '../partials/Post';
 
-export default function Home() {
-    TabTitle('Home');
+export default function Profile() {
+    TabTitle('Profile');
     let redirect = useNavigate();
     const cookies = new Cookies();
     const token = cookies.get('userToken');
@@ -20,11 +18,11 @@ export default function Home() {
     const [posts, setPosts] = useState([]);
 
     useEffect( () =>{
-        verifyUser(token);
-        loadPosts(token);
+        loadUserDetails(token);
+        loadProfile();
     }, []);
 
-    const verifyUser = async (getToken) =>{
+    const loadUserDetails = async (getToken) =>{
         const response = await getUserFromToken({token: getToken});
         if(response.data.status == "success") {
             setUser(response.data.user);
@@ -33,13 +31,19 @@ export default function Home() {
         }
     }
 
+    const loadProfile = async (getToken) =>{
+        const queryParameters = new URLSearchParams(window.location.search);
+        const paramId = queryParameters.get("id");
+        const response = await getUserProfile({token: getToken, id: paramId});
+    }
+
     const loadPosts = async (getToken) =>{
-        const response = await getHomePostsFromToken({token: getToken});
-        if(response.data.status == "success") {
-            setPosts(response.data.allPosts);
-        } else {
-            redirect('/user/login');
-        }
+        // const response = await getProfilePostsFromToken({token: getToken});
+        // if(response.data.status == "success") {
+        //     setPosts(response.data.allPosts);
+        // } else {
+        //     redirect('/user/login');
+        // }
     }
 
     return (
@@ -47,20 +51,11 @@ export default function Home() {
             <Navbar username={username} pic={pic} ></Navbar>
             <ModalLogout></ModalLogout>
             <div className='container-lg d-flex justify-content-center mt-5'>
-            {
-            (posts.length>0)?
-            <div className='d-flex flex-wrap flex-column gap-3'>
-                {
-                posts.map((data)=>(
-                    <div key={data.id}>
-                        <Post user_id={data.user_id} username={data.username} pic={data.pic} caption={data.caption} attachment={data.attachment} date={data.date}/>
+                <div className='d-flex'>
+                    <div>
+                        <img src={pic} alt="" style={{height: 150, width: 150}}/>
                     </div>
-                ))
-                }
-            </div>
-            :
-            <p>No post to show</p>
-            }
+                </div>
             </div>
         </div>
     )

@@ -12,15 +12,10 @@ export default function Login() {
         email: "",
         password: ""
     }
-
     const [userInput, setUserInput] = useState(defaultUserInput);
     const {email, password} = userInput;
 
-    const defaultMsg = {
-        status: "",
-        message: ""
-    }
-    const [msg, setMsg] = useState(defaultMsg);
+    const [msg, setMsg] = useState({});
     const {status, message} = msg;
 
     const onValueChange =(e)=>{
@@ -34,27 +29,23 @@ export default function Login() {
         if(response.data.status == "success") {
             const cookies = new Cookies();
             cookies.set('userToken', response.data.token, { path: '/' });
-            // alert(cookies.get('userToken'));
             redirect('/home');
         } else {
             setMsg(response.data);
         }
     }
 
-    let error=<div></div>;
-    if(status=="error"){
-        error=
-        <div className='alert alert-primary alert-dismissible fade show mb-0 mx-2' role='alert'>
-            {message}
-            <button type='button' className='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-        </div>
-        ;
-    }
-
     return (
         <div>
             <div style={{height: 150}} className="pt-1">
-                {error}
+            {
+            (status=="error")?
+            <div class="alert alert-primary mx-2 mb-0" role="alert">
+            {message}
+            </div>
+            :
+            <div></div>
+            }
             </div>
             <div className="container-fluid d-flex align-items-center justify-content-center">
                 <div className="bg-dark rounded rounded-4 mb-5 d-flex justify-content-center flex-column px-4 text-light" style={{height: 400, width: 500}}>
