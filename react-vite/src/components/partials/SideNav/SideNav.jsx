@@ -26,13 +26,9 @@ const SideNav = () => {
       <nav>
         <ul className="nav-list">
           <li className="nav-item">
-          <Link to={"/"} className={`nav-link light ${isDarkMode ? "dark" : ""}`}>
+          <Link to={"/"} className={`nav-link light ${isDarkMode ? "dark" : ""} a`}>
               <FontAwesomeIcon icon={faHome} className="nav-icon" /><span className="nav-label">Home</span>
             </Link>
-            {/* <a href="/" className={`nav-link light ${isDarkMode ? "dark" : ""}`}>
-              <FontAwesomeIcon icon={faHome} className="nav-icon" />
-              <span className="nav-label">Home</span>
-            </a> */}
           </li>
           <li className="nav-item">
             <Link to={"#"} className={`nav-link light ${isDarkMode ? "dark" : ""}`}>

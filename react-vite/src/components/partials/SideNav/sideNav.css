@@ -8,6 +8,7 @@
   background-color: #fff;
   overflow-y: auto;
   transition: all 0.3s ease-in-out;
+  /* Hide icon label text for even smaller viewports */
 }
 .sidenav.dark {
   background-color: #292b2f;
@@ -23,6 +24,18 @@
 .sidenav .sidenav-header .logo {
   height: 30px;
 }
+@media only screen and (max-width: 780px) {
+  .sidenav {
+    font-size: 16px;
+    width: 80px;
+    margin-right: 5px;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .sidenav {
+    display: none;
+  }
+}
 .sidenav .nav-item {
   display: flex;
   align-items: center;
@@ -37,6 +50,7 @@
   font-weight: 600;
   text-decoration: none;
   padding: 8px 16px;
+  /* Hide label text for smaller viewports */
 }
 .sidenav .nav-item a.light {
   color: #262626;
@@ -47,38 +61,73 @@
 .sidenav .nav-item a:hover {
   color: #3897f0;
 }
+@media only screen and (max-width: 780px) {
+  .sidenav .nav-item a .nav-label {
+    display: none;
+  }
+}
 .sidenav .nav-item .nav-icon {
   font-size: 20px;
   margin-right: 10px;
+  /* Reduce icon size for smaller viewports */
+  /* Hide icon label text for even smaller viewports */
+}
+@media only screen and (max-width: 780px) {
+  .sidenav .nav-item .nav-icon {
+    font-size: 16px;
+    margin-right: 5px;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .sidenav .nav-item .nav-icon {
+    display: none;
+  }
 }
 .sidenav .nav-item .nav-label {
   font-size: 14px;
+}
+.sidenav .search-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+.sidenav .search-box .search-icon {
+  font-size: 20px;
+  margin-right: 10px;
+}
+.sidenav .search-box .search-input {
+  border: none;
+  padding: 8px 16px;
+  font-size: 16px;
+  width: 100%;
+}
+.sidenav .search-box .search-input.dark {
+  background-color: #44464b;
+  color: #fff;
 }
 .sidenav .sidenav-footer {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 10px;
-  border-top: 1px solid #ddd;
 }
-
-.theme-toggle {
+.sidenav .sidenav-footer .theme-toggle {
   display: flex;
   align-items: center;
-  background-color: transparent;
+  justify-content: center;
   border: none;
+  background-color: transparent;
   cursor: pointer;
-  color: #8e8e8e;
+  padding: 8px 16px;
+}
+.sidenav .sidenav-footer .theme-toggle:hover {
+  background-color: #fafafa;
+}
+.sidenav .sidenav-footer .theme-toggle .theme-icon {
+  font-size: 20px;
+  margin-right: 10px;
+}
+.sidenav .sidenav-footer .theme-toggle .theme-label {
   font-size: 14px;
-  text-decoration: underline;
-}
-.theme-toggle:hover {
-  color: #262626;
-}
-.theme-toggle .theme-icon {
-  font-size: 16px;
-  margin-right: 8px;
-}
-.theme-toggle .theme-label {
-  font-weight: 600;
 }/*# sourceMappingURL=sideNav.css.map */
