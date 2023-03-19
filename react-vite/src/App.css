@@ -43,15 +43,29 @@
     background: linear-gradient(to top, rgb(9, 32, 63) 0%, rgb(83, 120, 149) 100%);
 }
 
-img {
-    width: 300px;
-    margin: 10px;
-  }
-
 .name-link:hover {
     color: gray;
 }
 
 .comment-box:focus {
     outline: none;
+}
+
+#style-4::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: none;
+}
+
+#style-4::-webkit-scrollbar
+{
+	width: 0px;
+}
+
+#style-4::-webkit-scrollbar-thumb {
+    background: white;
+    -webkit-box-shadow: none;
+}
+
+#style-4::-webkit-scrollbar-thumb:window-inactive {
+    background: none;
 }

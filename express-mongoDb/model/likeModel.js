@@ -1,24 +1,20 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const commentSchema = new Schema({
+const likeSchema = new Schema({
     post_id: {
         type: String,
         required: true
     },
-    post_user_id: {
+    user_posted: {
         type: String,
         required: true
     },
-    comment_user_id: {
-        type: String,
-        required: true
-    },
-    comment: {
+    user_liked: {
         type: String,
         required: true
     }
 }, {timestamps: true});
 
-const Comment = mongoose.model("comments", postSchema);
-module.exports = Comment;
+const Like = mongoose.model("likes", likeSchema);
+module.exports = Like;

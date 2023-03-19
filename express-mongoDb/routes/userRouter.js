@@ -14,12 +14,12 @@ userRouter.post('/login', userController.user_login);
 userRouter.post('/home', jwtAuth.verify, userController.user_home);
 
 //profile info
-userRouter.post('/home', jwtAuth.verify, userController.user_profile);
+userRouter.post('/profile', jwtAuth.verify, userController.user_profile);
 
-//logout
-// userRouter.get('/logout', (req, res)=>{
-//     res.clearCookie('token');
-//     res.redirect('login');
-// });
+//follow user
+userRouter.post('/follow', jwtAuth.verify, userController.user_follow);
+
+//get follower and following
+userRouter.post('/get-follows', jwtAuth.verify, userController.user_get_follow);
 
 module.exports = userRouter;

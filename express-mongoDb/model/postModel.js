@@ -10,7 +10,7 @@ const postSchema = new Schema({
         type: String
     },
     attachment: {
-        type: String,
+        type: [String],
         required: true
     }
 }, {timestamps: true});

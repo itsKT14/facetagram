@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-// import { ModalLogout } from './ModalLogout';
+
 const Navbar = (props) => {
     return (
         <nav className="navbar navbar-expand-lg bg-white sticky-top border-bottom shadow-sm" data-bs-theme="white">
@@ -38,6 +38,11 @@ const Navbar = (props) => {
                             Sir JPL  
                             </Link>
                         </li>
+                        <li className="nav-item">
+                            <Link data-bs-toggle="modal" data-bs-target="#createPostModal" className="nav-link nav-menu">
+                            Create 
+                            </Link>
+                        </li>
                     </ul>
                     <div id="tokenName" className="navbar-nav">
                         <li className="nav-item dropdown">
@@ -47,21 +52,19 @@ const Navbar = (props) => {
                             </a>
                             <ul className="dropdown-menu">
                                 <li>
-                                    <Link to={"/test"} className="dropdown-item nav-menu">Profile</Link>
+                                    <Link to={`/user/profile?id=${props.user_id}`} className="dropdown-item nav-menu">Profile</Link>
                                 </li>
                                 <li>
-                                    <Link to={"/test"} className="dropdown-item nav-menu">Settings</Link>
+                                    <Link to={"/user/settings"} className="dropdown-item nav-menu">Settings</Link>
                                 </li>
                                 <li>
                                     <Link className="dropdown-item nav-menu" data-bs-toggle="modal" data-bs-target="#exampleModal4">Log out</Link>
-                                    {/* <a class="dropdown-item nav-menu" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal4">Log out</a> */}
                                 </li>
                             </ul>
                         </li>
                     </div>
                 </div>
             </div>
-            {/* <ModalLogout></ModalLogout> */}
         </nav>
     )
 }

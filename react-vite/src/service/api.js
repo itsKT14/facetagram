@@ -58,10 +58,34 @@ export const getHomePostsFromToken = async(data) => {
     }
 }
 
-// export const getProfilePostsFromToken = async(data) => {
-//     try {
-//         return await axios.post(url+"/post/profile-posts", data);
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
+export const getProfilePostsFromToken = async(data) => {
+    try {
+        return await axios.post(url+"/post/profile-posts", data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const followUser = async(data) => {
+    try {
+        return await axios.post(url+"/user/follow", data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getFollows = async(data) => {
+    try {
+        return await axios.post(url+"/user/get-follows", data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const likePost = async(data) => {
+    try {
+        return await axios.post(url+"/post/like", data);
+    } catch (error) {
+        console.log(error);
+    }
+}

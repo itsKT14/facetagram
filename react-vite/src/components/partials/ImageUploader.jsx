@@ -21,6 +21,7 @@ const ImageUploader = () => {
         uploadBytes(imageRef, imageUpload).then((snapshot) => {
             getDownloadURL(snapshot.ref).then((url) => {
                 setImageUrls((prev) => [...prev, url]);
+                console.log(imageUpload);
             });
         });
     };
@@ -35,20 +36,19 @@ const ImageUploader = () => {
         });
     }, []);
     return (
-        <div className="container mt-5 d-flex flex-row-reverse">
+        <div className="container-lg mt-5 d-flex align-items-center flex-column">
             <div>
-                <input
-                    type="file"
-                    onChange={(event) => {
-                        setImageUpload(event.target.files[0]);
-                    }} 
-                />
+                <input type="file" onChange={(event) => setImageUpload(event.target.files[0])} />
+                <button onClick={uploadFile} className='btn btn-danger'> Upload Image</button>
             </div>
             <div>
-                <button onClick={uploadFile} className='btn btn-danger'> Upload Image</button>
-                {imageUrls.map((url) => {
-                    return <img src={url} />;
-                })}
+            {
+                imageUrls.map( (url)=>(
+                    <div key={url}>
+                        <img key={url} src={url} style={{width: 200, margin: 20}} />
+                    </div>
+                ))
+            }
             </div>
         </div>
     )

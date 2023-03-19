@@ -2,27 +2,36 @@ import React, { useState, useEffect} from 'react'
 import Navbar from '../partials/Navbar';
 import Cookies from 'universal-cookie';
 import { TabTitle } from '../../utilities/title';
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { getUserFromToken, getUserProfile } from '../../service/api';
-import { ModalLogout } from '../partials/ModalLogout';
+import {
+    getUserFromToken,
+    getUserProfile, 
+    getProfilePostsFromToken, 
+    followUser,
+    getFollows
+} from '../../service/api';
+import ModalLogout from '../partials/ModalLogout';
+import Thumbnail from '../partials/Thumbnail';
 
 export default function Profile() {
     TabTitle('Profile');
     let redirect = useNavigate();
+    const queryParameters = new URLSearchParams(window.location.search);
+    const paramId = queryParameters.get("id");
     const cookies = new Cookies();
     const token = cookies.get('userToken');
 
-    const [user, setUser] = useState({});
-    const {username, pic} = user;
-
-    const [posts, setPosts] = useState([]);
-
     useEffect( () =>{
-        loadUserDetails(token);
-        loadProfile();
+        loadNavnVerify(token);
+        loadProfile(token, paramId);
+        loadPosts(token, paramId);
+        loadFollows(token, paramId);
     }, []);
 
-    const loadUserDetails = async (getToken) =>{
+    const [user, setUser] = useState({});
+    const {username, pic} = user;
+    const loadNavnVerify = async (getToken) =>{
         const response = await getUserFromToken({token: getToken});
         if(response.data.status == "success") {
             setUser(response.data.user);
@@ -31,29 +40,154 @@ export default function Profile() {
         }
     }
 
-    const loadProfile = async (getToken) =>{
-        const queryParameters = new URLSearchParams(window.location.search);
-        const paramId = queryParameters.get("id");
-        const response = await getUserProfile({token: getToken, id: paramId});
+    const [follow, setFollow] = useState("Follow");
+    const followHandle = async (isFollowing) =>{
+        if(isFollowing){
+            setFollow("Following");
+        } else {
+            setFollow("Follow");
+        }
+        await followUser({token: token, id: paramId, isFollowing: isFollowing});
+        await loadFollows(token, paramId);
     }
 
-    const loadPosts = async (getToken) =>{
-        // const response = await getProfilePostsFromToken({token: getToken});
-        // if(response.data.status == "success") {
-        //     setPosts(response.data.allPosts);
-        // } else {
-        //     redirect('/user/login');
-        // }
+    const [profile, setProfile] = useState({});
+    const loadProfile = async (getToken, getProfileId) =>{
+        const response = await getUserProfile({token: getToken, id: getProfileId});
+        if(response.data.status == "success") {
+            setProfile(response.data.user);
+            setFollow(response.data.btnFollow);
+        } else {
+            redirect('/user/login');
+        }
+    }
+
+    const [numFollower, setNumFollower] = useState("");
+    const [numFollowing, setNumFollowing] = useState("");
+    const loadFollows = async (getToken, getProfileId) =>{
+        const response = await getFollows({token: getToken, id: getProfileId});
+        if(response.data.status == "success") {
+            const getNumFollower = response.data.numFollower;
+            const getNumFollowing = response.data.numFollowing;
+            const followerX = (getNumFollower>1)?" followers":" follower";
+            setNumFollower(getNumFollower+followerX);
+            setNumFollowing(getNumFollowing+" following");
+        } else {
+            redirect('/user/login');
+        }
+    }
+
+    const [posts, setPosts] = useState([]);
+    const [numPost, setNumPost] = useState("");
+    const loadPosts = async (getToken, getProfileId) =>{
+        const response = await getProfilePostsFromToken({token: getToken, id: getProfileId});
+        if(response.data.status == "success") {
+            setPosts(response.data.allPosts);
+            const postX = (response.data.total>1)?" posts":" post";
+            setNumPost(response.data.total+postX);
+        } else {
+            redirect('/user/login');
+        }
     }
 
     return (
         <div>
             <Navbar username={username} pic={pic} ></Navbar>
             <ModalLogout></ModalLogout>
-            <div className='container-lg d-flex justify-content-center mt-5'>
-                <div className='d-flex'>
-                    <div>
-                        <img src={pic} alt="" style={{height: 150, width: 150}}/>
+            <div className='container-lg d-flex justify-content-center flex-column mt-5'>
+                <div className='d-flex w-75'>
+                    <div className='col-3 d-flex justify-content-center me-5'>
+                        <img className='rounded-circle' src={profile.pic} alt="" style={{height: 150, width: 150}}/>
+                    </div>
+                    <div className='d-flex flex-column col-8'>
+                        <div className='d-flex align-items-start'>
+                            <p className='fs-5 me-4 py-1'>{profile.username}</p>
+                            {
+                            (profile.isOwner==true)?
+                            <Link to={"/user/settings"} className="btn btn-info">Edit profile</Link>
+                            :
+                            <div className='d-flex align-items-center gap-3'>
+                                {
+                                (follow=="Follow")?
+                                <button className="btn btn-primary" onClick={()=>followHandle(true)} >&nbsp;Follow&nbsp;</button>
+                                :
+                                <button className="btn btn-info" data-bs-toggle="modal" data-bs-target="#unfollowModal">Following</button>
+                                }
+                                <Link to={"/user/message"} className="btn btn-info">Message</Link>
+                                <div className="dropdown">
+                                    <button className='border-0 bg-transparent fs-4' data-bs-toggle="dropdown">
+                                        <i className="bi bi-three-dots"></i>
+                                    </button>
+                                    <ul className="dropdown-menu dropdown-menu-start">
+                                        <li><p className="dropdown-item mb-0">Block</p></li>
+                                        <li><p className="dropdown-item mb-0">Report</p></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            }
+                            
+                        </div>
+                        <div className='d-flex gap-5'>
+                            <p>{numPost}</p>
+                            <p>{numFollower}</p>
+                            <p>{numFollowing}</p>
+                        </div>
+                        <div>
+                            <p className='fw-semibold mb-0'>{profile.fname}</p>
+                        </div>
+                        <div>
+                            <p>{profile.bio}</p>
+                        </div>
+                    </div>
+                </div>
+                <div className='w-75 mt-5'>
+                    <ul className="d-flex justify-content-center nav nav-tabs gap-5" id="myTab" role="tablist">
+                        <li className="nav-item" role="presentation">
+                            <button className="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">POSTS</button>
+                        </li>
+                        <li className="nav-item" role="presentation">
+                            <button className="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">REELS</button>
+                        </li>
+                        <li className="nav-item" role="presentation">
+                            <button className="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">TAGGED</button>
+                        </li>
+                    </ul>
+                    <div className="tab-content pt-4 mb-5" id="myTabContent">
+                        <div className="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabIndex="0">
+                        {
+                        (posts.length>0)?
+                        <div className='d-flex flex-wrap gap-3'>
+                            {
+                            posts.map((data)=>(
+                                <div key={data.id}>
+                                    <Thumbnail attachment={data.attachment}/>
+                                </div>
+                            ))
+                            }
+                        </div>
+                        :
+                        <p>No post to show</p>
+                        }
+                        </div>
+                        <div className="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabIndex="0">...</div>
+                        <div className="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabIndex="0">...</div>
+                    </div>
+                </div>
+            </div>
+            <div className="modal fade" id="unfollowModal" tabIndex="-1" aria-labelledby="unfollowModalLabel4" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5" id="unfollowModalLabel4">Unfollow</h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                        Do you want to unfollow {profile.fname}?
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" className="btn btn-primary" onClick={()=>followHandle(false)} data-bs-dismiss="modal">Confirm</button>
+                        </div>
                     </div>
                 </div>
             </div>

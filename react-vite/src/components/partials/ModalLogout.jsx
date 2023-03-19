@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
 
-export const ModalLogout = () => {
+const ModalLogout = () => {
     let redirect = useNavigate();
     const cookies = new Cookies();
     
@@ -24,10 +24,12 @@ export const ModalLogout = () => {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" className="btn btn-primary" onClick={()=>logout()}>Confirm</button>
+                        <button type="button" className="btn btn-primary" onClick={()=>logout()} data-bs-dismiss="modal">Confirm</button>
                     </div>
                 </div>
             </div>
         </div>
     )
 }
+
+export default ModalLogout;
