@@ -6,13 +6,12 @@ const commentSchema = new Schema({
         type: String,
         required: true
     },
-    post_user_id: {
-        type: String,
-        required: true
-    },
     comment_user_id: {
         type: String,
         required: true
+    },
+    comment_to: {
+        type: String
     },
     comment: {
         type: String,
@@ -20,5 +19,5 @@ const commentSchema = new Schema({
     }
 }, {timestamps: true});
 
-const Comment = mongoose.model("comments", postSchema);
+const Comment = mongoose.model("comments", commentSchema);
 module.exports = Comment;

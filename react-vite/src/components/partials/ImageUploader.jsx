@@ -38,7 +38,7 @@ const ImageUploader = () => {
     return (
         <div className="container-lg mt-5 d-flex align-items-center flex-column">
             <div>
-                <input type="file" onChange={(event) => setImageUpload(event.target.files[0])} />
+                <input type="file" onChange={(event) => setImageUpload(event.target.files[0])}/>
                 <button onClick={uploadFile} className='btn btn-danger'> Upload Image</button>
             </div>
             <div>

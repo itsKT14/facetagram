@@ -1,4 +1,4 @@
-const checkDate = (createAt) => {
+const checkDate = (createAt) =>{
     const time = new Date(createAt);
     const now = new Date();
     const diff = (now.getTime() - time.getTime()) / 1000;
@@ -20,4 +20,17 @@ const checkDate = (createAt) => {
     return time.toDateString();
 }
 
-module.exports = checkDate;
+const checkMDY = (createAt) =>{
+    const date = new Date(createAt);
+    const d = date.getDate();
+    // const m = date.getMonth()+1;
+    const m = date.toLocaleString('default', { month: 'long' });
+    const y = date.getFullYear();
+    const mdy = `${m} ${d}, ${y}`
+    return mdy;
+}
+
+module.exports = {
+    checkDate,
+    checkMDY
+}

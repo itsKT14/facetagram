@@ -1,20 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Cookies from 'universal-cookie';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import {
     ref,
     uploadBytes,
-    getDownloadURL,
-    listAll,
-    list,
+    getDownloadURL
 } from "firebase/storage";
 import { storage } from "../../firebase";
 import { v4 } from "uuid";
 import { addPost } from '../../service/api';
-import { async } from '@firebase/util';
 
-const ModalCreatePost = () => {
+const ModalCreatePost = (props) => {
     const [image, setImage] = useState([]);
     const [urls, setUrls] = useState([]);
     const [uploads, setUploads] = useState([]);
@@ -29,9 +26,15 @@ const ModalCreatePost = () => {
     const callAddPost = async () =>{
         const cookies = new Cookies();
         const token = cookies.get('userToken');
+        document.getElementById('modalLoadingBtn').click();
         const response = await addPost({token: token, caption: caption, attachment: uploads});
-        console.log(response.data);
-        alert("Your post has been shared");
+        if(props.page=="home"){
+            await props.reloadPosts(token);
+        }
+        if(props.page=="profile"){
+            await props.reloadPosts(token, props.paramId);
+        }
+        document.getElementById('modalCompleteBtn').click();
     }
 
     const uploadFiles = (files) =>{
@@ -88,7 +91,7 @@ const ModalCreatePost = () => {
                                 <FontAwesomeIcon icon="fa-solid fa-photo-film" style={{fontSize: 100}}/>
                                 <p className='fs-4 mb-0'>Import up to 3 photos and videos</p>
                                 <button type="button" className="btn btn-primary btn-sm" onClick={()=>document.getElementById('chooseFile').click()}>Select from computer</button>
-                                <input id='chooseFile' type='file' accept="image/png, image/gif, image/jpeg video/mp4, video/x-m4v, video/*" onChange={(e) => uploadFiles(e.target.files)} multiple hidden/>
+                                <input id='chooseFile' type='file' accept="image/png, image/jpeg, image/gif, video/mp4" onChange={(e) => uploadFiles(e.target.files)} multiple hidden/>
                             </div>
                             :
                             <div id="carouselExampleIndicators" className="carousel slide w-100">
@@ -154,12 +157,12 @@ const ModalCreatePost = () => {
                     <div className="modal-content">
                         <div className="modal-header d-flex">
                             <h1 className="modal-title fs-5 flex-fill text-center">Create new post</h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={()=>cancelFiles()}></button>
                         </div>
                         <div className="modal-body d-flex flex-column" style={{height: 350}}>
                             <Link className="nav-link fw-semibold d-flex">
-                                <img className="rounded-circle border me-3" src="https://www.pinoytechnoguide.com/wp-content/uploads/2021/10/vivo-X70-sample-picture-person-portrait-mode.jpg" alt="" style={{width: 40, height: 40}}/>
-                                <p className='name-link pt-2 m-0'>{`props.username`}</p>
+                                <img className="rounded-circle border me-3" src={props.pic} alt="" style={{width: 40, height: 40}}/>
+                                <p className='name-link pt-2 m-0'>{props.username}</p>
                             </Link>
                             <div className='d-flex align-items-start flex-fill mt-2'>
                                 <textarea className='border-0 comment-box col' rows={11} id='caption' name='caption' placeholder='Write a caption...' style={{resize: "none"}} onChange={(e)=> setCaption(e.target.value)} value={caption}></textarea>
@@ -167,7 +170,7 @@ const ModalCreatePost = () => {
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#createPostModal">&nbsp;Back&nbsp;</button>
-                            <button type="button" className="btn btn-primary" onClick={()=>postHandle()}>&nbsp;Post&nbsp;</button>
+                            <button type="button" className="btn btn-primary" onClick={()=>postHandle()} data-bs-dismiss="modal">&nbsp;Post&nbsp;</button>
                         </div>
                     </div>
                 </div>

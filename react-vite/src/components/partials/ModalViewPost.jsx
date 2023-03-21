@@ -3,16 +3,12 @@ import Cookies from 'universal-cookie';
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { likePost } from '../../service/api';
+import Comment from './Comment';
+import { addComment } from '../../service/api';
 
 const ModalViewPost = (props) => {
     const cookies = new Cookies();
     const token = cookies.get('userToken');
-
-    const handleKeyDown =(e)=>{
-        e.target.style.height = 'inherit';
-        e.target.style.height = `${e.target.scrollHeight}px`;
-        e.target.style.height = `${Math.min(e.target.scrollHeight, 100)}px`;
-    }
 
     const [numLikes, setNumLikes] = useState(props.numLikes);
     const defaultWordLike = (props.numLikes>1)?"likes":"like";
@@ -31,7 +27,33 @@ const ModalViewPost = (props) => {
         await likePost({token: token, post_id: postId, isLiked: isLiked});
     }
 
-    
+    const [comment, setComment] = useState("");
+    const handleKeyDown =(e)=>{
+        setComment(e.target.value);
+        e.target.style.height = 'inherit';
+        e.target.style.height = `${e.target.scrollHeight}px`;
+        e.target.style.height = `${Math.min(e.target.scrollHeight, 100)}px`;
+    }
+
+    const [numComments, setNumComments] = useState(props.numComments);
+    const defaultWordComment = (props.numComments>1)?"comments":"comment";
+    const [wordComment, setWordComment] = useState(defaultWordComment);
+    const [commentBox, setCommentBox] = useState([]);
+    const commentHandle = async () =>{
+        const response = await addComment({token: token, post_id: props.post_id, comment_to: "", comment: comment});
+        const addedComment = response.data.commentAdded;
+        const user = response.data.user;
+        setComment("");
+        setNumComments(numComments+1);
+        setCommentBox(oldArray => [...oldArray, {
+            comment_id: addedComment._id,
+            user_id: addedComment.comment_user_id,
+            comment_to: addedComment.comment_to,
+            comment: addedComment.comment,
+            username: user.username,
+            pic: user.pic
+        }]);
+    }
 
     const urlLists = props.attachment;
     const [image, setImage] = useState([]);
@@ -91,36 +113,30 @@ const ModalViewPost = (props) => {
                             </Link>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div id='style-4' className="modal-body overflow-auto flex-fill">
-                            <div className='' style={{height: 900}}>
-                                <div className='d-flex align-items-start mb-3'>
-                                    <Link to={`/user/profile?id=`} className="nav-link fw-semibold d-flex">
-                                        <img className="rounded-circle border me-3" src="https://www.pinoytechnoguide.com/wp-content/uploads/2021/10/vivo-X70-sample-picture-person-portrait-mode.jpg" alt="" style={{width: 40, height: 40}}/>
-                                    </Link>
-                                    <div className=''>
-                                        <div className='pt-2 m-0'>
-                                            <Link to={`/user/profile?id=`} className="nav-link fw-semibold name-link me-2 d-inline">
-                                            kennethtan
-                                            </Link>
-                                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Qui iste error non incidunt pariatur dolore nisi unde laboriosam sapiente fugiat.
+                        <div id='style-4' className="modal-body overflow-auto h-100">
+                            <div className=''>
+                                {
+                                    (props.caption!=="")?
+                                    <div className='d-flex align-items-start mb-3'>
+                                        <Link to={`/user/profile?id=${props.user_id}`} className="nav-link fw-semibold d-flex">
+                                            <img className="rounded-circle border me-3" src={props.pic} alt="img" style={{width: 40, height: 40}}/>
+                                        </Link>
+                                        <div className=''>
+                                            <div className='pt-2 m-0'>
+                                                <Link to={`/user/profile?id=${props.user_id}`} className="nav-link fw-semibold name-link me-2 d-inline">
+                                                {props.username}
+                                                </Link>
+                                                {props.caption}
+                                            </div>
+                                            <div style={{fontSize: 13, color: "gray"}}>{props.update}</div>
                                         </div>
-                                        <div style={{fontSize: 13, color: "gray"}}>3w</div>
                                     </div>
-                                </div>
-                                <div className='d-flex align-items-start mb-3'>
-                                    <Link to={`/user/profile?id=`} className="nav-link fw-semibold d-flex">
-                                        <img className="rounded-circle border me-3" src="https://www.pinoytechnoguide.com/wp-content/uploads/2021/10/vivo-X70-sample-picture-person-portrait-mode.jpg" alt="" style={{width: 40, height: 40}}/>
-                                    </Link>
-                                    <div className=''>
-                                        <div className='pt-2 m-0'>
-                                            <Link to={`/user/profile?id=`} className="nav-link fw-semibold name-link me-2 d-inline">
-                                            kennethtan
-                                            </Link>
-                                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Qui iste error non incidunt pariatur dolore nisi unde laboriosam sapiente fugiat.
-                                        </div>
-                                        <div style={{fontSize: 13, color: "gray"}}>3w</div>
-                                    </div>
-                                </div>
+                                    :
+                                    <div></div>
+                                }
+                                {(numComments>0) && (
+                                    <Comment key={props.post_id} post_id={props.post_id} numComments={numComments}></Comment>
+                                )}
                             </div>
                         </div>
                         <div className="modal-body d-flex flex-column border-top pt-1">
@@ -151,10 +167,15 @@ const ModalViewPost = (props) => {
                             }
                             <p style={{fontSize: 10, color: "gray"}}>{props.date}</p>
                             <div className='d-flex align-items-start'>
-                                <textarea className='border-0 comment-box col' rows={1} id='comment' name='post' placeholder='Add a comment...' style={{resize: "none"}} onChange={(e)=>handleKeyDown(e)}></textarea>
-                                <button className='border-0 bg-transparent text-primary-emphasis fw-semibold col-auto'>
+                                <textarea className='border-0 comment-box col' rows={1} id='comment' name='post' placeholder='Add a comment...' style={{resize: "none"}} onChange={(e)=>handleKeyDown(e)} value={comment}></textarea>
+                                {
+                                (comment!=="")?
+                                <button className='border-0 bg-transparent text-primary-emphasis fw-semibold col-auto' onClick={()=>commentHandle()}>
                                     Post
                                 </button>
+                                :
+                                <div></div>
+                                }
                             </div>
                         </div>
                     </div>

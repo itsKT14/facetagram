@@ -89,3 +89,19 @@ export const likePost = async(data) => {
         console.log(error);
     }
 }
+
+export const addComment = async(data) => {
+    try {
+        return await axios.post(url+"/post/add-comment", data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getComment = async(data) => {
+    try {
+        return await axios.post(url+"/post/get-comment", data);
+    } catch (error) {
+        console.log(error);
+    }
+}

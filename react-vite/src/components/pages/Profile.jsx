@@ -13,6 +13,10 @@ import {
 } from '../../service/api';
 import ModalLogout from '../partials/ModalLogout';
 import Thumbnail from '../partials/Thumbnail';
+import ModalCreatePost from '../partials/ModalCreatePost';
+import ModalViewPost from '../partials/ModalViewPost';
+import ModalLoading from '../partials/ModalLoading';
+import ModalComplete from '../partials/ModalComplete';
 
 export default function Profile() {
     TabTitle('Profile');
@@ -30,7 +34,7 @@ export default function Profile() {
     }, []);
 
     const [user, setUser] = useState({});
-    const {username, pic} = user;
+    const {user_id, username, pic} = user;
     const loadNavnVerify = async (getToken) =>{
         const response = await getUserFromToken({token: getToken});
         if(response.data.status == "success") {
@@ -94,6 +98,11 @@ export default function Profile() {
         <div>
             <Navbar username={username} pic={pic} ></Navbar>
             <ModalLogout></ModalLogout>
+            <ModalCreatePost user_id={user_id} username={username} pic={pic} reloadPosts={loadPosts} page={"profile"} paramId={paramId}></ModalCreatePost>
+            <button id="modalLoadingBtn" type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalLoading" hidden></button>
+            <ModalComplete></ModalComplete>
+            <button id="modalCompleteBtn" type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalComplete" hidden></button>
+            <ModalLoading></ModalLoading>
             <div className='container-lg d-flex justify-content-center flex-column mt-5'>
                 <div className='d-flex w-75'>
                     <div className='col-3 d-flex justify-content-center me-5'>
@@ -160,7 +169,10 @@ export default function Profile() {
                             {
                             posts.map((data)=>(
                                 <div key={data.id}>
-                                    <Thumbnail attachment={data.attachment}/>
+                                    <Thumbnail post_id={data.id} attachment={data.attachment}/>
+                                    <ModalViewPost post_id={data.id} user_id={data.user_id} username={data.username} 
+                                    pic={data.pic} caption={data.caption} attachment={data.attachment} date={data.date} 
+                                    update={data.update} isLiked={data.isLiked} numLikes={data.numLikes} numComments={data.numComments}/>
                                 </div>
                             ))
                             }

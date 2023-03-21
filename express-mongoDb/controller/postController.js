@@ -2,9 +2,11 @@ const User = require('../model/userModel');
 const Post = require('../model/postModel');
 const Follow = require('../model/followModel');
 const Like = require('../model/likeModel');
-const checkDate = require('../utils/checkDate');
-const {getUsername, getPic} = require('../utils/checkUser');
+const Comment = require('../model/commentModel');
+const { checkDate, checkMDY } = require('../utils/checkDate');
+const { getUsername, getPic } = require('../utils/checkUser');
 const { getLikeRecord, getNumLikes } = require('../utils/checkLike');
+const { getNumComments } = require('../utils/checkComment');
 
 const post_add = async (req, res) => {
 	try {
@@ -31,7 +33,6 @@ const home_post = async (req, res) => {
     try {
         const userId = req.getUser.id;
         if(userId) {
-            
             const followedUsers = await Follow.find({user_follower: userId});
             const followedUsersIds = [];
             for(let user of followedUsers){
@@ -51,9 +52,12 @@ const home_post = async (req, res) => {
                     caption: post.caption,
                     attachment: post.attachment,
                     date: checkDate(post.createdAt),
+                    update: checkDate(post.updatedAt),
+                    mdy: checkMDY(post.updatedAt),
                     owner: (post.user_id==userId),
                     isLiked: await getLikeRecord(post._id.toString(), userId),
-                    numLikes: await getNumLikes(post._id.toString())
+                    numLikes: await getNumLikes(post._id.toString()),
+                    numComments: await getNumComments(post._id.toString())
                 }
                 allPosts.push(objPost)
             }
@@ -82,7 +86,11 @@ const profile_post = async (req, res) => {
                     pic: await getPic(post.user_id),
                     caption: post.caption,
                     attachment: post.attachment,
-                    date: checkDate(post.createdAt)
+                    date: checkDate(post.createdAt),
+                    update: checkDate(post.updatedAt),
+                    isLiked: await getLikeRecord(post._id.toString(), userId),
+                    numLikes: await getNumLikes(post._id.toString()),
+                    numComments: await getNumComments(post._id.toString())
                 }
                 allPosts.push(objPost)
             }
@@ -125,9 +133,68 @@ const post_like = async (req, res) => {
     }
 }
 
+const comment_add = async (req, res) => {
+    try {
+        const userId = req.getUser.id;
+        const postId = req.body.post_id;
+        const commentId = req.body.comment_to;
+        const comment = req.body.comment;
+        if(userId) {
+            const newComment = new Comment({
+                post_id: postId,
+                comment_user_id: userId,
+                comment_to: commentId,
+                comment: comment
+            });
+            const commentAdded = await newComment.save();
+            const user = {
+                username: await getUsername(userId),
+                pic: await getPic(userId)
+            }
+            res.send({status: "success", message: "Comment has been posted", commentAdded, user});
+        } else {
+            res.send({status: "error", message: "No user"});
+        }
+    } catch (error) {
+        res.status(400).send(error);
+		console.log(error);
+    }
+}
+
+const comment_get = async (req, res) => {
+    try {
+        const userId = req.getUser.id;
+        const postId = req.body.post_id;
+        if(userId) {
+            const allComments = await Comment.find({post_id: postId}).sort({createdAt: -1});
+            const comments = [];
+            for(let rowComment of allComments) {
+                const objPost = {
+                    comment_id: rowComment._id,
+                    comment_user: rowComment.comment_user_id,
+                    username: await getUsername(rowComment.comment_user_id),
+                    pic: await getPic(rowComment.comment_user_id),
+                    comment_to: rowComment.comment_to,
+                    comment: rowComment.comment,
+                    date: checkDate(rowComment.createdAt)
+                }
+                comments.push(objPost)
+            }
+            res.send({status: "success", message: "Got all comments from post", comments: comments});
+        } else {
+            res.send({status: "error", message: "No user"});
+        }
+    } catch (error) {
+        res.status(400).send(error);
+		console.log(error);
+    }
+}
+
 module.exports = {
     post_add,
     home_post,
     profile_post,
-    post_like
+    post_like,
+    comment_add,
+    comment_get
 }

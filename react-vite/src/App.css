@@ -69,3 +69,7 @@
 #style-4::-webkit-scrollbar-thumb:window-inactive {
     background: none;
 }
+
+/* html {
+    overflow-y: scroll !important;
+} */

@@ -14,4 +14,10 @@ postRouter.post('/profile-posts', jwtAuth.verify, postController.profile_post);
 //like or unlike post
 postRouter.post('/like', jwtAuth.verify, postController.post_like);
 
+//add comment
+postRouter.post('/add-comment', jwtAuth.verify, postController.comment_add);
+
+//get comment
+postRouter.post('/get-comment', jwtAuth.verify, postController.comment_get);
+
 module.exports = postRouter;

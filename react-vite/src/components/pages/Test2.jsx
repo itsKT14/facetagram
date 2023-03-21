@@ -1,12 +1,14 @@
 import React from 'react'
 import SideNav from '../partials/SideNav/SideNav';
-import ModalCreatePost from '../partials/ModalCreatePost';
+import ModalLoading from '../partials/ModalLoading';
+import ModalComplete from '../partials/ModalComplete';
 
 export default function Test2() {
     return (
         <div>
             <SideNav></SideNav>
-            <ModalCreatePost></ModalCreatePost>
+            <ModalLoading></ModalLoading>
+            <ModalComplete></ModalComplete>
         </div>
     )
 }

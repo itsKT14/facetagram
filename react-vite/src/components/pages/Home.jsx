@@ -7,8 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { getUserFromToken, getHomePostsFromToken } from '../../service/api';
 import ModalLogout from '../partials/ModalLogout';
 import Post from '../partials/Post';
-import ModalViewPost from '../partials/ModalViewPost';
 import ModalCreatePost from '../partials/ModalCreatePost';
+import ModalLoading from '../partials/ModalLoading';
+import ModalComplete from '../partials/ModalComplete';
 
 export default function Home() {
     TabTitle('Home');
@@ -46,21 +47,21 @@ export default function Home() {
         <div>
             <Navbar user_id={user_id} username={username} pic={pic} ></Navbar>
             <ModalLogout></ModalLogout>
-            <ModalCreatePost></ModalCreatePost>
+            <ModalCreatePost user_id={user_id} username={username} pic={pic} reloadPosts={loadPosts} page={"home"}></ModalCreatePost>
+            <button id="modalLoadingBtn" type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalLoading" hidden></button>
+            <ModalComplete></ModalComplete>
+            <button id="modalCompleteBtn" type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalComplete" hidden></button>
+            <ModalLoading></ModalLoading>
             <div className='container-lg d-flex justify-content-center mt-5'>
             {
             (posts.length>0 && posts[0]!=="loading")?
             <div className='d-flex flex-wrap flex-column gap-3'>
                 {
                 posts.map((data)=>(
-                    <div key={data.id}>
-                        <Post post_id={data.id} user_id={data.user_id} username={data.username} 
-                        pic={data.pic} caption={data.caption} attachment={data.attachment} 
-                        date={data.date} owner={data.owner} isLiked={data.isLiked} numLikes={data.numLikes}/>
-                        <ModalViewPost post_id={data.id} user_id={data.user_id} username={data.username} 
-                        pic={data.pic} caption={data.caption} attachment={data.attachment} 
-                        date={data.date} owner={data.owner} isLiked={data.isLiked} numLikes={data.numLikes}/>
-                    </div>
+                    <Post key={data.id} post_id={data.id} user_id={data.user_id} username={data.username} 
+                    pic={data.pic} caption={data.caption} attachment={data.attachment} date={data.date} 
+                    update={data.update} owner={data.owner} isLiked={data.isLiked} numLikes={data.numLikes} 
+                    numComments={data.numComments} mdy={data.mdy}/>
                 ))
                 }
             </div>
