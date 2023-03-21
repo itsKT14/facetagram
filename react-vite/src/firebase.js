@@ -1,15 +1,20 @@
 import { initializeApp } from "firebase/app";
-import { getStorage } from 'firebase/storage';
+import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
+import { getFirestore } from "firebase/firestore";
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAASZT1RP9Q4p1UOGB1JDhHOfQTN4XO00k",
-  authDomain: "facetagram-capstone.firebaseapp.com",
-  projectId: "facetagram-capstone",
-  storageBucket: "facetagram-capstone.appspot.com",
-  messagingSenderId: "1062067154648",
-  appId: "1:1062067154648:web:6c426f486ad9c5bffab1ad"
+    apiKey: "AIzaSyCSjExG4XpH3S7CG6tRzJAGWhmHyL_oYNY",
+    authDomain: "chat1-b013f.firebaseapp.com",
+    projectId: "chat1-b013f",
+    storageBucket: "chat1-b013f.appspot.com",
+    messagingSenderId: "282658106935",
+    appId: "1:282658106935:web:f8bef323f6dd9bd8acd9b2"
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-export const storage = getStorage(app);
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth();
+export const storage = getStorage();
+export const db = getFirestore();
