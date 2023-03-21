@@ -8,19 +8,16 @@ export default function Register() {
     TabTitle('Register');
 
     const defaultUserInput = {
-        name: "",
+        fname: "",
+        username: "",
         email: "",
-        password: ""
+        password: "",
+        confirm_password: ""
     }
-
     const [userInput, setUserInput] = useState(defaultUserInput);
-    const {name, email, password} = userInput;
+    const {fname, username, email, password, confirm_password} = userInput;
 
-    const defaultMsg = {
-        status: "",
-        message: ""
-    }
-    const [msg, setMsg] = useState(defaultMsg);
+    const [msg, setMsg] = useState({});
     const {status, message} = msg;
 
     const onValueChange =(e)=>{
@@ -38,28 +35,29 @@ export default function Register() {
         }
     }
     
-    let error=<div></div>;
-    if(status=="error"){
-        error=
-        <div className='alert alert-primary alert-dismissible fade show mb-0 mx-2' role='alert'>
-            {message}
-            <button type='button' className='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-        </div>
-        ;
-    }
-    
     return (
         <div>
-            <div style={{height: 100}} className='pt-1'>
-                {error}
+            <div style={{height: 80}} className='pt-1'>
+            {
+            (status=="error")?
+            <div class="alert alert-primary mx-2 mb-0" role="alert">
+            {message}
+            </div>
+            :
+            <div></div>
+            }
             </div>
             <div className="container-fluid d-flex align-items-center justify-content-center">
-                <div className="bg-dark rounded rounded-4 mb-5 d-flex justify-content-center flex-column px-4 text-light" style={{height: 500, width: 500}}>
+                <div className="bg-dark rounded rounded-4 d-flex justify-content-center flex-column px-4 text-light" style={{height: 600, width: 500}}>
                     <h1 className="align-self-center mb-3">Register</h1>
                     <form>
                         <div className="mb-3">
-                            <label htmlFor="name" className="form-label">Name</label>
-                            <input type="text" className="form-control" name="name" id="name" onChange={(e)=> onValueChange(e)} value={name} required/>
+                            <label htmlFor="fname" className="form-label">Full Name</label>
+                            <input type="text" className="form-control" name="fname" id="fname" onChange={(e)=> onValueChange(e)} value={fname} required/>
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="username" className="form-label">Username</label>
+                            <input type="text" className="form-control" name="username" id="username" onChange={(e)=> onValueChange(e)} value={username} required/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="email" className="form-label">Email Address</label>
@@ -69,11 +67,10 @@ export default function Register() {
                             <label htmlFor="password" className="form-label">Password</label>
                             <input type="password" className="form-control" name="password" id="password" onChange={(e)=> onValueChange(e)} value={password} required/>
                         </div>
-                        <div className="mb-3 form-check">
-                            <input type="checkbox" className="form-check-input" id="exampleCheck1" onClick={()=>showPassword()}/>
-                            <label className="form-check-label" htmlFor="exampleCheck1">Show Password</label>
+                        <div className="mb-3">
+                            <label htmlFor="confirm_password" className="form-label">Confirm Password</label>
+                            <input type="password" className="form-control" name="confirm_password" id="confirm_password" onChange={(e)=> onValueChange(e)} value={confirm_password} required/>
                         </div>
-                        
                         <div className="mb-3">
                             <p className="form-label">Already have an account?&nbsp;
                                 <Link to={"/user/login"}>
