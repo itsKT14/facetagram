@@ -1,0 +1,21 @@
+div.settingContent{
+    width: calc(100% - 430px);
+    height: 74vh;
+    margin: 65px 10px 0 430px;
+    position: fixed;  
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+#v-pills-HOCIWY-tab:hover,
+#v-pills-superVision-tab:hover,
+#v-pills-YDAM-tab:hover,
+#v-pills-Help-tab:hover{
+   background-color: #ccc;
+}
+
+div.settingMenu{
+    position: fixed;
+    margin-top: 67px;
+    margin-left: 260px;
+}
