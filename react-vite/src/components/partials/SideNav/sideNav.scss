@@ -1,3 +1,9 @@
+*{
+  box-sizing: border-box;
+  padding: 0px;
+  margin: 0px;
+}
+
 .sidenav {
   width: 250px;
   height: 100vh;
@@ -18,24 +24,74 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-wrap: wrap;
     padding: 10px;
     border-bottom: 1px solid #ddd;
+    font-size: 16px;
+
+
 
     .logo {
       height: 30px;
     }
-    
   }
 
-  @media only screen and (max-width: 780px) {
-    font-size: 16px;
-    width: 80px;
-    margin-right: 5px;
-  }
-  
-  /* Hide icon label text for even smaller viewports */
+  /* Modify sidenav for smaller viewports */
   @media only screen and (max-width: 480px) {
-    display: none;
+    width: 100%;
+    height: 10vh;
+    bottom: 0;
+    top: auto;
+    border-top: 1px solid #ddd;
+
+    .sidenav-header {
+      border-bottom: none;
+      display: none;
+    }
+
+    .nav-list {
+      display: flex !important;
+      flex-wrap: wrap;
+      align-content: center;
+      justify-content: center;
+      align-items: center;
+    }
+  
+
+    .search-box {
+      display: none;
+    }
+
+    .sidenav-footer {
+      display: none;
+    }
+  }
+
+  /* Modify sidenav for larger viewports */
+  @media only screen and (min-width: 481px) and (max-width: 779px) {
+    width: 100px;
+    height: 100vh;
+    top: 0;
+    bottom: auto;
+
+    .sidenav-title {
+      font-size: 12px;
+    }
+    .logo{
+      height: 5px;
+      margin-left: 0px;
+      margin-right: 0px;
+      padding-left: 0px;
+    }
+
+
+    .search-box {
+      display: flex;
+    }
+
+    .sidenav-footer {
+      display: flex;
+    }
   }
 
   .nav-item {
@@ -65,30 +121,29 @@
       &:hover {
         color: #3897f0;
       }
-      
+
       /* Hide label text for smaller viewports */
       @media only screen and (max-width: 780px) {
         .nav-label {
           display: none;
         }
-        
       }
     }
 
     .nav-icon {
       font-size: 20px;
       margin-right: 10px;
-      
+
       /* Reduce icon size for smaller viewports */
       @media only screen and (max-width: 780px) {
         font-size: 16px;
         margin-right: 5px;
       }
-      
+
       /* Hide icon label text for even smaller viewports */
-      @media only screen and (max-width: 480px) {
-        display: none;
-      }
+      // @media only screen and (max-width: 480px) {
+      //   display: none;
+      // }
     }
 
     .nav-label {
@@ -100,7 +155,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    padding: 2px;
 
     .search-icon {
       font-size: 20px;
@@ -111,7 +166,7 @@
       border: none;
       padding: 8px 16px;
       font-size: 16px;
-      width: 100%;
+      width: 50%;
 
       &.dark {
         background-color: #44464b;
@@ -148,15 +203,6 @@
         font-size: 14px;
       }
     }
-          /* Reduce icon size for smaller viewports */
-          @media only screen and (max-width: 780px) {
-            font-size: 16px;
-            margin-right: 5px;
-          }
-          
-          /* Hide icon label text for even smaller viewports */
-          @media only screen and (max-width: 480px) {
-            display: none;
-          }
+
   }
 }

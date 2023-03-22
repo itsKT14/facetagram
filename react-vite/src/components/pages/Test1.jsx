@@ -6,8 +6,13 @@ import SideNav from '../partials/SideNav/SideNav';
 export default function Test1() {
     return (
         <div>
-            <SideNav></SideNav>
+            <div>
+            <SideNav/>
+            </div>
+            <div>
             <ImageUploader/>
+            </div>
+
            {/* <ChatHome/> */}
         </div>
     )
