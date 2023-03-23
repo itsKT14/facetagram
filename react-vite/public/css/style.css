@@ -1,0 +1,75 @@
+@font-face {
+    font-family: 'Billabong';
+    src: url('../font/FontsFree-Net-Billabong.ttf') format('truetype');
+}
+
+body{
+    background-color: white;
+    /* background-image: linear-gradient(0deg, #D9AFD9 0%, #97D9E1 100%); */
+    color:#0093E9;
+}
+
+.billabong{
+    font-family: 'Billabong';
+    font-weight: 300;
+    color: #0093E9;
+}
+
+.f-size{
+    font-size: 5rem;
+}
+
+.btn-log-in, .btn-register{
+    background-color: #0093E9;
+    background-image: linear-gradient(160deg, #0093E9 0%, #80D0C7 100%);
+    color: white;
+}
+
+.btn-log-in:hover, .btn-register:hover{
+    background-color: blue;
+    color: blue;
+}
+
+.bg-form{
+    background-color: #D9AFD9;
+    background-image: linear-gradient(0deg, #D9AFD9 0%, #97D9E1 100%);
+    -webkit-box-shadow: inset -1px 3px 8px 5px #1F87FF, 2px 5px 16px 0px #0B325E, 5px 5px 15px 5px rgba(0,0,0,0); 
+    box-shadow: inset -1px 3px 8px 5px #1F87FF, 2px 5px 16px 0px #0B325E, 5px 5px 15px 5px rgba(0,0,0,0);
+}
+
+.container{
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+.container-right{
+    width: 50%;
+    display: flex;
+    flex: start;
+    justify-content: center;
+    align-items: center; 
+}
+
+.container-left{
+    width: 50%;
+    display: flex;
+    flex: end;
+    justify-content: end;
+    align-items: end;
+}
+
+ul{
+    margin-left: 40px;
+    color:#0093E9;
+    font-size: 20px;
+
+}
+
+background-color: #85FFBD;
+background-image: linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%);
+
+
+
+
+
