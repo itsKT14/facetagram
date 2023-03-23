@@ -13,7 +13,7 @@ The development team has worked tirelessly to create a user-friendly interface t
 
 Overall, Kodegram is an exciting project that showcases the power of modern web development tools and technologies. The development team has put in a tremendous amount of effort to create a platform that is both user-friendly and innovative, and they are excited to share their creation with the world.
 
-Problem and Solution
+**Problem and Solution**
 
 Problem: Many social media platforms have become overly commercialized, making it difficult for users to connect with each other authentically and share their interests and passions.
 
