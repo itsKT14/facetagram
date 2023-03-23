@@ -1,36 +1,33 @@
-import React, { useState, useEffect} from 'react'
+import React, { useState, useEffect} from 'react';
 import Navbar from '../partials/Navbar';
 import Cookies from 'universal-cookie';
 import { TabTitle } from '../../utilities/title';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import {
-    getUserFromToken,
-    getUserProfile, 
-    getProfilePostsFromToken, 
-    followUser,
-    getFollows
-} from '../../service/api';
-import ModalLogout from '../partials/ModalLogout';
+import { getUserFromToken, getUserProfile, getProfilePostsFromToken, getFollows, followUser } from '../../service/api';
 import Thumbnail from '../partials/Thumbnail';
+import ModalLogout from '../partials/ModalLogout';
 import ModalCreatePost from '../partials/ModalCreatePost';
 import ModalViewPost from '../partials/ModalViewPost';
 import ModalLoading from '../partials/ModalLoading';
 import ModalComplete from '../partials/ModalComplete';
+import ModalFollower from '../partials/ModalFollower';
+import ModalFollowing from '../partials/ModalFollowing';
 
 export default function Profile() {
     TabTitle('Profile');
     let redirect = useNavigate();
-    const queryParameters = new URLSearchParams(window.location.search);
-    const paramId = queryParameters.get("id");
     const cookies = new Cookies();
     const token = cookies.get('userToken');
+    const queryParameters = new URLSearchParams(window.location.search);
+    const paramId = queryParameters.get("id");
+    const [likeModal, setLikeModal] = useState(0);
 
     useEffect( () =>{
         loadNavnVerify(token);
         loadProfile(token, paramId);
+        loadNumbers(token, paramId);
         loadPosts(token, paramId);
-        loadFollows(token, paramId);
     }, []);
 
     const [user, setUser] = useState({});
@@ -46,13 +43,17 @@ export default function Profile() {
 
     const [follow, setFollow] = useState("Follow");
     const followHandle = async (isFollowing) =>{
+        const response = await followUser({token: token, id: paramId, isFollowing: isFollowing});
+        if(response.data.status == "success") {
+            await loadNumbers(token, paramId);
+        } else {
+            redirect('/user/login');
+        }
         if(isFollowing){
             setFollow("Following");
         } else {
             setFollow("Follow");
         }
-        await followUser({token: token, id: paramId, isFollowing: isFollowing});
-        await loadFollows(token, paramId);
     }
 
     const [profile, setProfile] = useState({});
@@ -68,7 +69,8 @@ export default function Profile() {
 
     const [numFollower, setNumFollower] = useState("");
     const [numFollowing, setNumFollowing] = useState("");
-    const loadFollows = async (getToken, getProfileId) =>{
+    const [numPost, setNumPost] = useState("");
+    const loadNumbers = async (getToken, getProfileId) =>{
         const response = await getFollows({token: getToken, id: getProfileId});
         if(response.data.status == "success") {
             const getNumFollower = response.data.numFollower;
@@ -76,19 +78,20 @@ export default function Profile() {
             const followerX = (getNumFollower>1)?" followers":" follower";
             setNumFollower(getNumFollower+followerX);
             setNumFollowing(getNumFollowing+" following");
+
+            const postX = (response.data.numPost>1)?" posts":" post";
+            setNumPost(response.data.numPost+postX);
         } else {
             redirect('/user/login');
         }
     }
 
-    const [posts, setPosts] = useState([]);
-    const [numPost, setNumPost] = useState("");
+    const [posts, setPosts] = useState(['loading']);
     const loadPosts = async (getToken, getProfileId) =>{
         const response = await getProfilePostsFromToken({token: getToken, id: getProfileId});
         if(response.data.status == "success") {
             setPosts(response.data.allPosts);
-            const postX = (response.data.total>1)?" posts":" post";
-            setNumPost(response.data.total+postX);
+            loadNumbers(token, paramId);
         } else {
             redirect('/user/login');
         }
@@ -96,13 +99,15 @@ export default function Profile() {
 
     return (
         <div>
-            <Navbar username={username} pic={pic} ></Navbar>
+            <Navbar user_id={user_id} username={username} pic={pic} ></Navbar>
             <ModalLogout></ModalLogout>
             <ModalCreatePost user_id={user_id} username={username} pic={pic} reloadPosts={loadPosts} page={"profile"} paramId={paramId}></ModalCreatePost>
             <button id="modalLoadingBtn" type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalLoading" hidden></button>
             <ModalComplete></ModalComplete>
             <button id="modalCompleteBtn" type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalComplete" hidden></button>
             <ModalLoading></ModalLoading>
+            <ModalFollower profile_id={paramId} follow={follow} loadNumbers={loadNumbers} likeModal={likeModal} setLikeModal={setLikeModal}></ModalFollower>
+            <ModalFollowing profile_id={paramId} follow={follow} loadNumbers={loadNumbers} likeModal={likeModal} setLikeModal={setLikeModal}></ModalFollowing>
             <div className='container-lg d-flex justify-content-center flex-column mt-5'>
                 <div className='d-flex w-75'>
                     <div className='col-3 d-flex justify-content-center me-5'>
@@ -138,8 +143,8 @@ export default function Profile() {
                         </div>
                         <div className='d-flex gap-5'>
                             <p>{numPost}</p>
-                            <p>{numFollower}</p>
-                            <p>{numFollowing}</p>
+                            <p className='follow-count' style={{cursor: "pointer"}} data-bs-toggle="modal" data-bs-target="#modalFollower">{numFollower}</p>
+                            <p className='follow-count' style={{cursor: "pointer"}} data-bs-toggle="modal" data-bs-target="#modalFollowing">{numFollowing}</p>
                         </div>
                         <div>
                             <p className='fw-semibold mb-0'>{profile.fname}</p>
@@ -164,7 +169,7 @@ export default function Profile() {
                     <div className="tab-content pt-4 mb-5" id="myTabContent">
                         <div className="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabIndex="0">
                         {
-                        (posts.length>0)?
+                        (posts.length>0 && posts[0]!=="loading")?
                         <div className='d-flex flex-wrap gap-3'>
                             {
                             posts.map((data)=>(
@@ -172,13 +177,26 @@ export default function Profile() {
                                     <Thumbnail post_id={data.id} attachment={data.attachment}/>
                                     <ModalViewPost post_id={data.id} user_id={data.user_id} username={data.username} 
                                     pic={data.pic} caption={data.caption} attachment={data.attachment} date={data.date} 
-                                    update={data.update} isLiked={data.isLiked} numLikes={data.numLikes} numComments={data.numComments}/>
+                                    update={data.update} isLiked={data.isLiked} numLikes={data.numLikes} 
+                                    numComments={data.numComments} likeModal={likeModal} setLikeModal={setLikeModal} 
+                                    loadNumbers={loadNumbers} paramId={paramId} isOwner={profile.isOwner} loadPosts={loadPosts}/>
                                 </div>
                             ))
                             }
                         </div>
                         :
-                        <p>No post to show</p>
+                        <div>
+                            {
+                            (posts[0]=="loading")?
+                            <div className="d-flex justify-content-center">
+                                <div className="spinner-border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            :
+                            <p>No post to show</p>
+                            }
+                        </div>
                         }
                         </div>
                         <div className="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabIndex="0">...</div>

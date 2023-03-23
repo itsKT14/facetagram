@@ -42,9 +42,57 @@ export const getUserProfile = async(data) => {
     }
 }
 
+export const followUser = async(data) => {
+    try {
+        return await axios.post(url+"/user/follow", data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getFollows = async(data) => {
+    try {
+        return await axios.post(url+"/user/follow-count", data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const followersDetail = async(data) => {
+    try {
+        return await axios.post(url+"/user/followers", data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const followingsDetail = async(data) => {
+    try {
+        return await axios.post(url+"/user/followings", data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export const addPost = async(data) => {
     try {
         return await axios.post(url+"/post/add", data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const editPost = async(data) => {
+    try {
+        return await axios.post(url+"/post/edit", data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const deletePost = async(data) => {
+    try {
+        return await axios.post(url+"/post/delete", data);
     } catch (error) {
         console.log(error);
     }
@@ -61,22 +109,6 @@ export const getHomePostsFromToken = async(data) => {
 export const getProfilePostsFromToken = async(data) => {
     try {
         return await axios.post(url+"/post/profile-posts", data);
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-export const followUser = async(data) => {
-    try {
-        return await axios.post(url+"/user/follow", data);
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-export const getFollows = async(data) => {
-    try {
-        return await axios.post(url+"/user/get-follows", data);
     } catch (error) {
         console.log(error);
     }
@@ -101,6 +133,14 @@ export const addComment = async(data) => {
 export const getComment = async(data) => {
     try {
         return await axios.post(url+"/post/get-comment", data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getPostLikers = async(data) => {
+    try {
+        return await axios.post(url+"/post/get-likers", data);
     } catch (error) {
         console.log(error);
     }

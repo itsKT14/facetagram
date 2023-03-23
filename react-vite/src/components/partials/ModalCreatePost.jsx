@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Cookies from 'universal-cookie';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
     ref,
     uploadBytes,
@@ -12,29 +13,39 @@ import { v4 } from "uuid";
 import { addPost } from '../../service/api';
 
 const ModalCreatePost = (props) => {
+    let redirect = useNavigate();
+    const cookies = new Cookies();
+    const token = cookies.get('userToken');
     const [image, setImage] = useState([]);
     const [urls, setUrls] = useState([]);
     const [uploads, setUploads] = useState([]);
     const [caption, setCaption] = useState("");
+    const [triggerEffect, setTriggerEffect] = useState(0);
 
     useEffect( () =>{
         if(uploads.length==image.length && image.length!=0){
+            setCaption("");
+            setUrls([]);
+            setImage([]);
             callAddPost();
         }
     }, [uploads]);
 
     const callAddPost = async () =>{
-        const cookies = new Cookies();
-        const token = cookies.get('userToken');
         document.getElementById('modalLoadingBtn').click();
         const response = await addPost({token: token, caption: caption, attachment: uploads});
-        if(props.page=="home"){
-            await props.reloadPosts(token);
+        if(response.data.status == "success") {
+            if(props.page=="home"){
+                await props.reloadPosts(token);
+            }
+            if(props.page=="profile"){
+                await props.reloadPosts(token, props.paramId);
+            }
+            document.getElementById('modalCompleteBtn').click();
+            setUploads([]);
+        } else {
+            redirect('/user/login');
         }
-        if(props.page=="profile"){
-            await props.reloadPosts(token, props.paramId);
-        }
-        document.getElementById('modalCompleteBtn').click();
     }
 
     const uploadFiles = (files) =>{
@@ -62,6 +73,7 @@ const ModalCreatePost = (props) => {
 
     const cancelFiles = () =>{
         setImage([]);
+        setCaption("");
     }
 
     const postHandle = () =>{
@@ -70,9 +82,11 @@ const ModalCreatePost = (props) => {
             uploadBytes(imageRef, urls[i]).then((snapshot) => {
                 getDownloadURL(snapshot.ref).then((url) => {
                     setUploads(oldArray => [...oldArray, url]);
+                    // setTriggerEffect(triggerEffect+1);
                 });
             });
         }
+        // setTriggerEffect(triggerEffect+1);
     }
 
     return (

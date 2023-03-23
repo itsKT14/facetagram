@@ -1,17 +1,3 @@
-.homeBanner{
-    min-height: 300px;
-}
-
-.homeHeader{
-    font-family: Papyrus;
-    font-size: 100px;
-}
-
-.homeDetail{
-    font-family: Papyrus;
-    font-size: 50px;
-}
-
 .cardsize{
     width: 15rem;
 }
@@ -47,6 +33,14 @@
     color: gray;
 }
 
+.black-link {
+    color: gray;
+}
+
+.black-link:hover {
+    color: black;
+}
+
 .comment-box:focus {
     outline: none;
 }
@@ -73,3 +67,7 @@
 /* html {
     overflow-y: scroll !important;
 } */
+
+.follow-count:hover {
+    text-shadow: 2px 2px 5px red;
+}

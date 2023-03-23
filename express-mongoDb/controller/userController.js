@@ -1,4 +1,5 @@
 const User = require('../model/userModel');
+const Post = require('../model/postModel');
 const Follow = require('../model/followModel');
 const validation = require('../utils/validation');
 const bcrypt = require('../utils/bcrypt');
@@ -50,8 +51,6 @@ const user_login = async (req, res) => {
         const isValid = await bcrypt.comparePassword(req.body.password, logUser.password);
         if(!isValid) return res.send({status: "error", message: "The password you've entered is incorrect."});
 
-        // const defaultPic = "/img/user-icon.png";
-        // const getPic = logUser.pic || "";
         const token = jwt.sign({
             id: logUser.id,
             email: logUser.email
@@ -138,14 +137,81 @@ const user_follow = async (req, res) => {
     }
 }
 
-const user_get_follow = async (req, res) => {
+const user_follow_count = async (req, res) => {
     try {
         const userId = req.getUser.id;
         const profileId = req.body.id;
         if(userId) {
             const numFollower = await Follow.countDocuments({user_followed: profileId});
             const numFollowing = await Follow.countDocuments({user_follower: profileId});
-            res.send({status: "success", message: "Got all follow details", numFollower, numFollowing});
+            const numPost = await Post.countDocuments({user_id: profileId});
+            res.send({status: "success", message: "Got all follow details", numFollower, numFollowing, numPost});
+        } else {
+            res.send({status: "error", message: "No user"});
+        }
+    } catch (error) {
+        res.send({status: "error", message: "backend error"});
+		console.log(error);
+    }
+}
+
+const user_followers = async (req, res) => {
+    try {
+        const userId = req.getUser.id;
+        const profileId = req.body.id;
+        if(userId) {
+            const rawFollowers = await Follow.find({user_followed: profileId});
+            const followers = [];
+            for(let rowFollower of rawFollowers) {
+                const logUser = await User.findOne({_id: rowFollower.user_follower});
+                let btnFollow = "Disabled";
+                if(userId!==rowFollower.user_follower){
+                    const followRecord = await Follow.findOne({user_followed: rowFollower.user_follower, user_follower: userId});
+                    btnFollow = (followRecord)?"Following":"Follow";
+                }
+                const objPost = {
+                    user_id: rowFollower.user_follower,
+                    fname: logUser.fname,
+                    username: logUser.username,
+                    pic: logUser.pic || "../../src/assets/img/user-icon.png",
+                    btnFollow: btnFollow
+                }
+                followers.push(objPost)
+            }
+            res.send({status: "success", message: "Got all follow details", followers});
+        } else {
+            res.send({status: "error", message: "No user"});
+        }
+    } catch (error) {
+        res.send({status: "error", message: "backend error"});
+		console.log(error);
+    }
+}
+
+const user_followings = async (req, res) => {
+    try {
+        const userId = req.getUser.id;
+        const profileId = req.body.id;
+        if(userId) {
+            const rawFollowings = await Follow.find({user_follower: profileId});
+            const followings = [];
+            for(let rowFollowing of rawFollowings) {
+                const logUser = await User.findOne({_id: rowFollowing.user_followed});
+                let btnFollow = "Disabled";
+                if(userId!==rowFollowing.user_followed){
+                    const followRecord = await Follow.findOne({user_followed: rowFollowing.user_followed, user_follower: userId});
+                    btnFollow = (followRecord)?"Following":"Follow";
+                }
+                const objPost = {
+                    user_id: rowFollowing.user_followed,
+                    fname: logUser.fname,
+                    username: logUser.username,
+                    pic: logUser.pic || "../../src/assets/img/user-icon.png",
+                    btnFollow: btnFollow
+                }
+                followings.push(objPost)
+            }
+            res.send({status: "success", message: "Got all follow details", followings});
         } else {
             res.send({status: "error", message: "No user"});
         }
@@ -161,5 +227,7 @@ module.exports = {
     user_home,
     user_profile,
     user_follow,
-    user_get_follow
+    user_follow_count,
+    user_followers,
+    user_followings
 }

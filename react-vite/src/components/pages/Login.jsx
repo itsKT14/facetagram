@@ -40,7 +40,7 @@ export default function Login() {
             <div style={{height: 150}} className="pt-1">
             {
             (status=="error")?
-            <div class="alert alert-primary mx-2 mb-0" role="alert">
+            <div className="alert alert-primary mx-2 mb-0" role="alert">
             {message}
             </div>
             :

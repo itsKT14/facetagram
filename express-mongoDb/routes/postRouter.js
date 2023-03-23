@@ -5,14 +5,23 @@ const jwtAuth = require('../utils/jwtAuth');
 //add post
 postRouter.post('/add', jwtAuth.verify, postController.post_add);
 
-//get all posts for home
-postRouter.post('/home-posts', jwtAuth.verify, postController.home_post);
+//delete post
+postRouter.post('/delete', jwtAuth.verify, postController.post_delete);
+
+//edit post
+postRouter.post('/edit', jwtAuth.verify, postController.post_edit);
 
 //get all posts for home
-postRouter.post('/profile-posts', jwtAuth.verify, postController.profile_post);
+postRouter.post('/home-posts', jwtAuth.verify, postController.post_home);
+
+//get all posts for home
+postRouter.post('/profile-posts', jwtAuth.verify, postController.post_profile);
 
 //like or unlike post
 postRouter.post('/like', jwtAuth.verify, postController.post_like);
+
+//get likers
+postRouter.post('/get-likers', jwtAuth.verify, postController.post_likers);
 
 //add comment
 postRouter.post('/add-comment', jwtAuth.verify, postController.comment_add);

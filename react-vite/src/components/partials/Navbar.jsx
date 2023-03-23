@@ -52,7 +52,7 @@ const Navbar = (props) => {
                             </a>
                             <ul className="dropdown-menu">
                                 <li>
-                                    <Link to={`/user/profile?id=${props.user_id}`} className="dropdown-item nav-menu">Profile</Link>
+                                    <Link to={`/user/profile?id=${props.user_id}`} className="dropdown-item nav-menu" reloadDocument>Profile</Link>
                                 </li>
                                 <li>
                                     <Link to={"/user/settings"} className="dropdown-item nav-menu">Settings</Link>

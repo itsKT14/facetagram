@@ -10,12 +10,14 @@ import Post from '../partials/Post';
 import ModalCreatePost from '../partials/ModalCreatePost';
 import ModalLoading from '../partials/ModalLoading';
 import ModalComplete from '../partials/ModalComplete';
+import Footer from '../partials/Footer';
 
 export default function Home() {
     TabTitle('Home');
     let redirect = useNavigate();
     const cookies = new Cookies();
     const token = cookies.get('userToken');
+    const [likeModal, setLikeModal] = useState(0);
 
     useEffect( () =>{
         loadNavnVerify(token);
@@ -61,7 +63,7 @@ export default function Home() {
                     <Post key={data.id} post_id={data.id} user_id={data.user_id} username={data.username} 
                     pic={data.pic} caption={data.caption} attachment={data.attachment} date={data.date} 
                     update={data.update} owner={data.owner} isLiked={data.isLiked} numLikes={data.numLikes} 
-                    numComments={data.numComments} mdy={data.mdy}/>
+                    numComments={data.numComments} mdy={data.mdy} likeModal={likeModal} setLikeModal={setLikeModal}/>
                 ))
                 }
             </div>
@@ -80,6 +82,7 @@ export default function Home() {
             </div>
             }
             </div>
+            <Footer></Footer>
         </div>
     )
 }

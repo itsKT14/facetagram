@@ -1,5 +1,12 @@
 const User = require('../model/userModel');
 
+const getFname = async (id) => {
+    if(id) {
+        const logUser = await User.findOne({_id: id});
+        return logUser.fname;
+    }
+}
+
 const getUsername = async (id) => {
     if(id) {
         const logUser = await User.findOne({_id: id});
@@ -17,5 +24,6 @@ const getPic = async (id) => {
 
 module.exports = {
     getUsername,
-    getPic
+    getPic,
+    getFname
 };

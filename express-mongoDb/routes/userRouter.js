@@ -19,7 +19,13 @@ userRouter.post('/profile', jwtAuth.verify, userController.user_profile);
 //follow user
 userRouter.post('/follow', jwtAuth.verify, userController.user_follow);
 
-//get follower and following
-userRouter.post('/get-follows', jwtAuth.verify, userController.user_get_follow);
+//get follower and following counts
+userRouter.post('/follow-count', jwtAuth.verify, userController.user_follow_count);
+
+//get follower user's details
+userRouter.post('/followers', jwtAuth.verify, userController.user_followers);
+
+//get following user's details
+userRouter.post('/followings', jwtAuth.verify, userController.user_followings);
 
 module.exports = userRouter;

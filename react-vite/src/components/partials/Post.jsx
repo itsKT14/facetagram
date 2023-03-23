@@ -2,47 +2,95 @@ import React, { useState, useEffect } from 'react';
 import Cookies from 'universal-cookie';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
-import { likePost } from '../../service/api';
-import { addComment } from '../../service/api';
+import { useNavigate } from "react-router-dom";
+import { likePost, addComment, deletePost } from '../../service/api';
 import Comment from './Comment';
+import ModalLike from './ModalLike';
+import ModalEditPost from './ModalEditPost';
 
 const Post = (props) => {
+    let redirect = useNavigate();
     const cookies = new Cookies();
     const token = cookies.get('userToken');
 
-    const getParentId = (element) =>{
-        document.getElementById(element).remove();
+    const [caption, setCaption] = useState(props.caption);
+    const [update, setUpdate] = useState(props.update);
+
+    const hidePost = (element) =>{
+        // document.getElementById(element).remove();
+        document.getElementById(element).style.display = "none";
     }
 
-    const ownerBtn = 
+    const deletePostHandle = async (post_id) =>{
+        if (confirm('Are you sure you want to delete this post?')) {
+            const response = await deletePost({token: token, post_id: post_id});
+            if(response.data.status == "success") {
+                try {
+                    const genericModalEl = document.getElementById(`viewPostModal${post_id}`);
+                    const modal = bootstrap.Modal.getInstance(genericModalEl);
+                    modal.hide();
+                } catch (error) {
+                    //ignore
+                }
+                // document.getElementById(`post${post_id}`).remove();
+                document.getElementById(`post${post_id}`).style.display = "none";
+                alert("Your post has been deleted");
+            } else {
+                redirect('/user/login');
+            }
+        } else {
+        // Do nothing!
+        }
+        
+    }
+
+    const ownerBtn =
     <ul className="dropdown-menu dropdown-menu-end">
-        <li><p className="dropdown-item mb-0 nav-menu" style={{cursor: "pointer"}}>Edit</p></li>
-        <li><p className="dropdown-item mb-0 nav-menu" style={{cursor: "pointer"}}>Delete</p></li>
+        <li><p className="dropdown-item mb-0 nav-menu" data-bs-toggle="modal" data-bs-target={`#editPostModal${props.post_id}`} style={{cursor: "pointer"}}>Edit</p></li>
+        <li onClick={()=>deletePostHandle(props.post_id)}><p className="dropdown-item mb-0 nav-menu" style={{cursor: "pointer"}}>Delete</p></li>
         <li><p className="dropdown-item mb-0 nav-menu" style={{cursor: "pointer"}}>Copy link</p></li>
     </ul>;
 
     const viewBtn = 
     <ul className="dropdown-menu dropdown-menu-end">
-        <li onClick={()=>getParentId(`post${props.post_id}`)}><p className="dropdown-item mb-0 nav-menu" style={{cursor: "pointer"}}>Hide</p></li>
+        <li onClick={()=>hidePost(`post${props.post_id}`)}><p className="dropdown-item mb-0 nav-menu" style={{cursor: "pointer"}}>Hide</p></li>
         <li><p className="dropdown-item mb-0 nav-menu" style={{cursor: "pointer"}}>Copy link</p></li>
         <li><p className="dropdown-item mb-0 nav-menu" style={{cursor: "pointer"}}>Report</p></li>
     </ul>;
+
+    const isOwner = props.owner;
+    const editBtnModal = (isOwner)?
+    <div className="dropdown me-1">
+        <button className='border-0 bg-transparent black-link fs-5 p-0' data-bs-toggle="dropdown">
+            <i className="fa-regular fa-pen-to-square"></i>
+        </button>
+        <ul className="dropdown-menu dropdown-menu-end">
+            <li><p className="dropdown-item mb-0 nav-menu" data-bs-toggle="modal" data-bs-target={`#editPostModal${props.post_id}`} style={{cursor: "pointer"}}>Edit</p></li>
+            <li onClick={()=>deletePostHandle(props.post_id)}><p className="dropdown-item mb-0 nav-menu" style={{cursor: "pointer"}}>Delete</p></li>
+        </ul>
+    </div>
+    :
+    <></>;
     
     const [numLikes, setNumLikes] = useState(props.numLikes);
     const defaultWordLike = (props.numLikes>1)?"likes":"like";
     const [wordLike, setWordLike] = useState(defaultWordLike);
     const [heart, setHeart] = useState(props.isLiked);
     const likeHandle = async (postId, isLiked) =>{
-        if(isLiked){
-            setHeart("Liked");
-            setNumLikes(numLikes+1);
-            (numLikes<1)?setWordLike("like"):setWordLike("likes");
+        const response = await likePost({token: token, post_id: postId, isLiked: isLiked});
+        if(response.data.status == "success") {
+            if(isLiked){
+                setHeart("Liked");
+                setNumLikes(numLikes+1);
+                (numLikes<1)?setWordLike("like"):setWordLike("likes");
+            } else {
+                setHeart("Unlike");
+                setNumLikes(numLikes-1);
+                (numLikes>2)?setWordLike("likes"):setWordLike("like");
+            }
         } else {
-            setHeart("Unlike");
-            setNumLikes(numLikes-1);
-            (numLikes>2)?setWordLike("likes"):setWordLike("like");
+            redirect('/user/login');
         }
-        await likePost({token: token, post_id: postId, isLiked: isLiked});
     }
 
     const [comment, setComment] = useState("");
@@ -59,18 +107,22 @@ const Post = (props) => {
     const [commentBox, setCommentBox] = useState([]);
     const commentHandle = async () =>{
         const response = await addComment({token: token, post_id: props.post_id, comment_to: "", comment: comment});
-        const addedComment = response.data.commentAdded;
-        const user = response.data.user;
-        setComment("");
-        setNumComments(numComments+1);
-        setCommentBox(oldArray => [...oldArray, {
-            comment_id: addedComment._id,
-            user_id: addedComment.comment_user_id,
-            comment_to: addedComment.comment_to,
-            comment: addedComment.comment,
-            username: user.username,
-            pic: user.pic
-        }]);
+        if(response.data.status == "success") {
+            const addedComment = response.data.commentAdded;
+            const user = response.data.user;
+            setComment("");
+            setNumComments(numComments+1);
+            setCommentBox(oldArray => [...oldArray, {
+                comment_id: addedComment._id,
+                user_id: addedComment.comment_user_id,
+                comment_to: addedComment.comment_to,
+                comment: addedComment.comment,
+                username: user.username,
+                pic: user.pic
+            }]);
+        } else {
+            redirect('/user/login');
+        }
     }
 
     const urlLists = props.attachment;
@@ -168,13 +220,14 @@ const Post = (props) => {
                 </div>
                 {
                 (numLikes>0)?
-                <p className='fw-semibold mb-1'>{numLikes} {wordLike}</p>
+                <p className='fw-semibold mb-1' data-bs-toggle="modal" data-bs-target={`#modalLike${props.post_id}`} style={{cursor: "pointer"}}>{numLikes} {wordLike}</p>
                 :
                 <div></div>
                 }
+                <ModalLike post_id={props.post_id} heart={heart} likeModal={props.likeModal} setLikeModal={props.setLikeModal}></ModalLike>
                 {
-                (props.caption!=="")?
-                <p className='fw-semibold mb-1'>{props.username} <span className='fw-normal'>&nbsp;{props.caption}</span></p>
+                (caption!=="")?
+                <p className='fw-semibold mb-1'>{props.username} <span className='fw-normal'>&nbsp;{caption}</span></p>
                 :
                 <div></div>
                 }
@@ -238,12 +291,15 @@ const Post = (props) => {
                                     <img className="rounded-circle border me-3" src={props.pic} alt="" style={{width: 40, height: 40}}/>
                                     <p className='name-link pt-2 m-0'>{props.username}</p>
                                 </Link>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <div className='d-flex align-items-start'>
+                                    <div>{editBtnModal}</div>
+                                    <button type="button" className="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
                             </div>
                             <div id='style-4' className="modal-body overflow-auto h-100">
                                 <div className=''>
                                     {
-                                    (props.caption!=="")?
+                                    (caption!=="")?
                                     <div className='d-flex align-items-start mb-3'>
                                         <Link to={`/user/profile?id=${props.user_id}`} className="nav-link fw-semibold d-flex">
                                             <img className="rounded-circle border me-3" src={props.pic} alt="img" style={{width: 40, height: 40}}/>
@@ -253,15 +309,15 @@ const Post = (props) => {
                                                 <Link to={`/user/profile?id=${props.user_id}`} className="nav-link fw-semibold name-link me-2 d-inline">
                                                 {props.username}
                                                 </Link>
-                                                {props.caption}
+                                                {caption}
                                             </div>
-                                            <div style={{fontSize: 13, color: "gray"}}>{props.update}</div>
+                                            <div style={{fontSize: 13, color: "gray"}}>{update}</div>
                                         </div>
                                     </div>
                                     :
                                     <div></div>
                                     }
-                                    {(numComments>0) && (
+                                    {(numComments<0) && (
                                         <Comment key={props.post_id} post_id={props.post_id} numComments={numComments}></Comment>
                                     )}
                                 </div>
@@ -288,7 +344,7 @@ const Post = (props) => {
                                 </div>
                                 {
                                 (numLikes>0)?
-                                <p className='fw-semibold my-1' style={{fontSize: 14}}>{numLikes} {wordLike}</p>
+                                <p className='fw-semibold my-1' data-bs-toggle="modal" data-bs-target={`#modalLike${props.post_id}`} style={{cursor: "pointer", fontSize: 14}}>{numLikes} {wordLike}</p>
                                 :
                                 <div></div>
                                 }
@@ -309,6 +365,9 @@ const Post = (props) => {
                     </div>
                 </div>
             </div>
+            <ModalEditPost user_id={props.user_id} username={props.username} 
+            pic={props.pic} post_id={props.post_id} caption={caption} 
+            setCaption={setCaption} viewImage={viewImage} setUpdate={setUpdate}></ModalEditPost>
         </div>
     )
 }
