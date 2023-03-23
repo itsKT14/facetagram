@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHome, faCompass, faHeart, faMoon, faSun, faSearch, faPlusSquare, faUserCircle, faMessage } from "@fortawesome/free-solid-svg-icons";
+import { faHome, faCompass, faHeart, faMoon, faSun, faSearch, faPlusSquare, faUserCircle, faMessage, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import "./sideNav.css";
 
@@ -21,19 +21,13 @@ const SideNav = () => {
             <div className="sidenav-header">
             <button id="test" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalComplete" hidden></button>
             <img className="logo" src="https://1000logos.net/wp-content/uploads/2017/02/Instagram-Logo.png" alt="Instagram" />
-                <h2 className="sidenav-title">Facetagram</h2>
+                <h2 className="sidenav-title">Kodegram</h2>
             </div>
             <nav>
                 <ul className="nav-list">
                 <li className="nav-item">
                 <Link to={"/"} className={`nav-link light a ${isDarkMode ? "dark" : ""}`}>
                     <FontAwesomeIcon icon={faHome} className="nav-icon" /><span className="nav-label">Home</span>
-                    </Link>
-                </li>
-                <li className="nav-item">
-                    <Link to={"#"} className={`nav-link light ${isDarkMode ? "dark" : ""}`}>
-                    <FontAwesomeIcon icon={faSearch} className="nav-icon" />
-                    <span className="nav-label">Search</span>
                     </Link>
                 </li>
                 <li className="nav-item">
@@ -64,6 +58,12 @@ const SideNav = () => {
                     <Link to={"/"} className={`nav-link light ${isDarkMode ? "dark" : ""}`}>
                     <FontAwesomeIcon icon={faUserCircle} className="nav-icon" />
                     <span className="nav-label">Profile</span>
+                    </Link>
+                </li>
+                <li className="nav-item">
+                    <Link to={"/"} className={`nav-link light ${isDarkMode ? "dark" : ""}`}>
+                    <FontAwesomeIcon icon={faQuestionCircle} className="nav-icon" />
+                    <span className="nav-label">About Us</span>
                     </Link>
                 </li>
                 </ul>
