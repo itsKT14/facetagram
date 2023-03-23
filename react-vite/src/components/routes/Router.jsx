@@ -9,6 +9,7 @@ import Test3 from '../pages/Test3';
 import Chatlogin from '../pages/Chatlogin';
 import Chatregister from '../pages/Chatregister';
 import Chathome from '../pages/Chathome';
+import About from '../pages/About';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
@@ -33,6 +34,7 @@ export default function RouterConvention() {
             <Route path='/test1' element={<Test1/>} />
             <Route path='/test2' element={<Test2/>} />
             <Route path='/test3' element={<Test3/>} />
+            <Route path='/about' element={<About/>} />
             <Route path='/chat/login' element={<Chatlogin/>} />
             <Route path='/chat/register' element={<Chatregister/>} />
             <Route path='/chat/home' element={
